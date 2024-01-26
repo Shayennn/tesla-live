@@ -22,6 +22,7 @@ FROM gcr.io/distroless/base-debian11 AS build-release-stage
 WORKDIR /
 
 COPY --from=build-stage /tesla-live /tesla-live
+COPY index.html /index.html
 
 EXPOSE 8080
 
