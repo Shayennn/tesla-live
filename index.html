@@ -10,26 +10,18 @@
     <table>
         <tr>
             <td><h2>Front</h2>
-                <video width="480" height="320" autoplay muted controls id="video_front">
-                    <source src="live?camera=front" type="video/mp4"/>
-                </video>
+                <video width="480" height="320" autoplay muted controls id="video_front"></video>
             </td>
             <td><h2>Back</h2>
-                <video width="480" height="320" autoplay muted controls id="video_back">
-                    <source src="live?camera=back" type="video/mp4"/>
-                </video>
+                <video width="480" height="320" autoplay muted controls id="video_back"></video>
             </td>
         </tr>
         <tr>
             <td><h2>Left</h2>
-                <video width="480" height="320" autoplay muted controls id="video_left">
-                    <source src="live?camera=left" type="video/mp4"/>
-                </video>
+                <video width="480" height="320" autoplay muted controls id="video_left"></video>
             </td>
             <td><h2>Right</h2>
-                <video width="480" height="320" autoplay muted controls id="video_right">
-                    <source src="live?camera=right" type="video/mp4"/>
-                </video>
+                <video width="480" height="320" autoplay muted controls id="video_right"></video>
             </td>
         </tr>
     </table>
@@ -40,6 +32,24 @@
     var video_back = document.getElementById('video_back');
     var video_left = document.getElementById('video_left');
     var video_right = document.getElementById('video_right');
+
+    // Load when page is loaded
+    video_front.src = "live?camera=front&rand=" + Math.random();
+    video_back.src = "live?camera=back&rand=" + Math.random();
+    video_left.src = "live?camera=left&rand=" + Math.random();
+    video_right.src = "live?camera=right&rand=" + Math.random();
+
+    // Mute when page is loaded
+    video_front.muted = true;
+    video_back.muted = true;
+    video_left.muted = true;
+    video_right.muted = true;
+
+    // Play when page is loaded
+    video_front.play();
+    video_back.play();
+    video_left.play();
+    video_right.play();
 
     video_front.addEventListener('ended', function () {
         video_front.src = "live?camera=front&rand=" + Math.random();
