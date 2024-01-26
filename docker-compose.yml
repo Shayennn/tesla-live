@@ -1,6 +1,6 @@
 version: '3.8'
 services:
-  TeslaLive:
+  tesla_live:
     build:
       context: .
       dockerfile: Dockerfile
