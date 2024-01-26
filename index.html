@@ -34,7 +34,7 @@
         </tr>
     </table>
 </div>
-<!--After video end reload the video-->
+<!--After video end reload the video with random number-->
 <script>
     var video_front = document.getElementById('video_front');
     var video_back = document.getElementById('video_back');
@@ -42,22 +42,19 @@
     var video_right = document.getElementById('video_right');
 
     video_front.addEventListener('ended', function () {
-        this.currentTime = 0;
+        video_front.src = "live?camera=front&rand=" + Math.random();
         this.load();
     }, false);
-
     video_back.addEventListener('ended', function () {
-        this.currentTime = 0;
+        video_back.src = "live?camera=back&rand=" + Math.random();
         this.load();
     }, false);
-
     video_left.addEventListener('ended', function () {
-        this.currentTime = 0;
+        video_left.src = "live?camera=left&rand=" + Math.random();
         this.load();
     }, false);
-
     video_right.addEventListener('ended', function () {
-        this.currentTime = 0;
+        video_right.src = "live?camera=right&rand=" + Math.random();
         this.load();
     }, false);
 </script>
