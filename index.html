@@ -1,0 +1,46 @@
+<html lang="en">
+<head>
+    <meta charset=utf-8/>
+    <title>Tesla Live</title>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>
+</head>
+<body>
+<div id='player'>
+    <h1>Tesla Live</h1>
+    <h2>Front</h2>
+    <video width="320" height="240" controls id="video_front"></video>
+    <h2>Back</h2>
+    <video width="320" height="240" controls id="video_back"></video>
+    <h2>Left</h2>
+    <video width="320" height="240" controls id="video_left"></video>
+    <h2>Right</h2>
+    <video width="320" height="240" controls id="video_right"></video>
+</div>
+<script>
+    let video = document.getElementById('video_front');
+    let videoSrc = 'live.m3u8?camera=';
+    if (Hls.isSupported()) {
+        ['front', 'back', 'left', 'right'].forEach(function (camera) {
+            let video = document.getElementById('video_' + camera);
+            let hls = new Hls({maxBufferSize: 160000});
+            hls.loadSource(videoSrc + camera);
+            hls.attachMedia(video);
+            hls.on(Hls.Events.MEDIA_ATTACHED, function () {
+                video.muted = true;
+                video.play();
+            });
+        });
+    }
+    else if (video.canPlayType('application/x-mpegURL')) {
+        ['front', 'back', 'left', 'right'].forEach(function (camera) {
+            let video = document.getElementById('video_' + camera);
+            video.src = videoSrc + camera;
+            video.addEventListener('loadedmetadata', function () {
+                video.muted = true;
+                video.play();
+            });
+        });
+    }
+</script>
+</body>
+</html>
