@@ -130,7 +130,7 @@ func handleLiveRequest(w http.ResponseWriter, r *http.Request) {
 			Key:    keyToSign,
 		})
 
-		urlStr, err := req.Presign(10 * time.Minute)
+		urlStr, err := req.Presign(5 * time.Second)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
