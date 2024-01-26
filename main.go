@@ -1,8 +1,6 @@
 package main
 
 import (
-	"compress/gzip"
-	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -23,7 +21,7 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
-	http.HandleFunc("/live.m3u8", handleLiveRequest)
+	http.HandleFunc("/live", handleLiveRequest)
 	http.HandleFunc("/", serveHTML)
 	log.Println("Server is running on port 8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
@@ -138,58 +136,8 @@ func handleLiveRequest(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		w.Header().Set("Accept-Ranges", "bytes")
-		w.Header().Set("Content-Type", "audio/mpegurl")
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Headers", "Range")
-		w.Header().Set("Access-Control-Expose-Headers", "Content-Length,Content-Range")
-		w.Header().Set("Access-Control-Allow-Methods", "GET, HEAD, OPTIONS")
-		w.Header().Set("Access-Control-Max-Age", "86400")
-		w.Header().Set("Cache-Control", "no-cache")
-		w.Header().Set("Content-Encoding", "gzip")
-
-		w.WriteHeader(http.StatusOK)
-
-		var fileDateTimeObj time.Time
-		if latestFiles[camera] == nil {
-			fileDateTimeObj = time.Now().In(loc)
-		} else {
-			timeFromFileName := re.FindStringSubmatch(*keyToSign)[0]
-			fileDateTime := strings.Split(timeFromFileName, "_")
-			fileDate := fileDateTime[0]
-			fileTime := strings.ReplaceAll(fileDateTime[1], "-", ":")
-			fileDateTimeStr := fileDate + "T" + fileTime + "+07:00"
-
-			fileDateTimeObj, _ = time.ParseInLocation("2006-01-02T15:04:05+07:00", fileDateTimeStr, loc)
-		}
-
-		minutesOfYear := uint64(fileDateTimeObj.In(loc).YearDay() * 24 * 60)
-		minutesOfYear += uint64(fileDateTimeObj.In(loc).Hour() * 60)
-		minutesOfYear += uint64(fileDateTimeObj.In(loc).Minute())
-
-		output := "#EXTM3U\r\n" +
-			"#EXT-X-VERSION:3\r\n" +
-			"#EXT-X-PROGRAM-DATE-TIME:" + fileDateTimeObj.Format("2006-01-02T15:04:05+07:00") + "\r\n" +
-			"#EXT-X-TARGETDURATION:60\r\n" +
-			//"#EXT-X-STREAM-INF:BANDWIDTH=54000,RESOLUTION=320x240,CODECS=\"avc1.64000d\"\r\n" +
-			//"#EXT-X-MAP:URI=\"%s\"\r\n" +
-			fmt.Sprintf("#EXT-X-MEDIA-SEQUENCE:%d\r\n", minutesOfYear) +
-			"#EXTINF:60.00,\r\n" +
-			urlStr + "\r\n"
-
-		gw := gzip.NewWriter(w)
-		defer func(gw *gzip.Writer) {
-			err := gw.Close()
-			if err != nil {
-				return
-			}
-		}(gw)
-
-		_, err = gw.Write([]byte(output))
-		if err != nil {
-			return
-		}
-
+		http.Redirect(w, r, urlStr, http.StatusFound)
+		return
 	} else {
 		http.Error(w, "No files found", http.StatusInternalServerError)
 		return
